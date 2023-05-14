@@ -37,7 +37,6 @@ export class TodoTaskComponent implements AfterViewInit {
       this.taskList = res.data;
       this.total = res.total;
       this.dataSource = new MatTableDataSource<PeriodicElement>(this.taskList);
-      this.dataSource.paginator = this.paginator;
     })
   }
 
@@ -45,8 +44,18 @@ export class TodoTaskComponent implements AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  onSaveForm  = (formData: any) => {
+  onSaveForm  = (formData: any, existingData: any) => {
     this.dialog.closeAll();
+    if(existingData){
+      const updatedTask = { ...existingData, ...formData }
+      this.service.updateTask(updatedTask).subscribe((res)=>{
+        const index = this.taskList.findIndex((item)=>item._id === existingData._id)
+        this.taskList[index] = { ...updatedTask };
+        this.dataSource = new MatTableDataSource<PeriodicElement>(this.taskList);
+      })
+      return;
+    }
+
     this.service.createTask(formData).subscribe((res)=>{
       const newTaskList = [...this.taskList];
       newTaskList.push(res.data)
@@ -65,16 +74,12 @@ export class TodoTaskComponent implements AfterViewInit {
     })
   }
 
-  onEditItem(element: PeriodicElement) {
-
-  }
-
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, existingData=null): void {
     this.dialog.open(DialogAnimationsExampleComponent, {
       width: '250px',
       enterAnimationDuration,
       exitAnimationDuration,
-      data: { onSaveForm: this.onSaveForm }
+      data: { onSaveForm: this.onSaveForm, existingData }
     });
   }
 

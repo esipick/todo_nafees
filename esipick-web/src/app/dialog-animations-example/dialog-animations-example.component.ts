@@ -10,16 +10,18 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class DialogAnimationsExampleComponent {
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { enterAnimationDuration: string, exitAnimationDuration: string, onSaveForm: (data: any) => void }
+    @Inject(MAT_DIALOG_DATA) public data: { enterAnimationDuration: string, exitAnimationDuration: string, 
+      onSaveForm: (data: any, existingData: any) => void, existingData: any 
+    }
   ) {}
   formValues = {
-    title: "",
-    priority: "",
-    status: ""
+    title: this.data.existingData?.title || "",
+    priority: this.data.existingData?.priority || "",
+    status: this.data.existingData?.status || ""
   }
 
   onSubmitForm(){
-    this.data.onSaveForm(this.formValues)
+    this.data.onSaveForm(this.formValues, this.data.existingData)
   }
 
 }

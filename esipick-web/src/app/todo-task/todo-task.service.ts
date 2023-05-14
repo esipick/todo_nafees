@@ -35,5 +35,13 @@ export class TaskTodoService {
       )
       .pipe(map((response: any) => response));
     }
+
+    public updateTask(payload:any): Observable<any> {
+      return this.https.put<any>(`${this.BASE_URL}/task`,
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(map((response: any) => response));
+  }
     
 }
